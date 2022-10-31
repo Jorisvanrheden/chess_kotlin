@@ -22,50 +22,18 @@ class Board(private val sizeX: Int, private val sizeY: Int) {
         matrix[0][2] = Bishop(PlayerType.WHITE)
         matrix[0][3] = Queen(PlayerType.WHITE)
         matrix[0][4] = King(PlayerType.WHITE)
+        matrix[0][5] = Bishop(PlayerType.WHITE)
+        matrix[0][6] = Knight(PlayerType.WHITE)
+        matrix[0][7] = Rook(PlayerType.WHITE)
 
-//        matrix[0] = Array(sizeX) {
-//            Rook(PlayerType.WHITE)
-//            Knight(PlayerType.WHITE)
-//            Bishop(PlayerType.WHITE)
-//            Queen(PlayerType.WHITE)
-//            King(PlayerType.WHITE)
-//            Bishop(PlayerType.WHITE)
-//            Knight(PlayerType.WHITE)
-//            Rook(PlayerType.WHITE)
-//        }
-//
-//        matrix[1] = Array(sizeX) {
-//            Pawn(PlayerType.WHITE)
-//            Pawn(PlayerType.WHITE)
-//            Pawn(PlayerType.WHITE)
-//            Pawn(PlayerType.WHITE)
-//            Pawn(PlayerType.WHITE)
-//            Pawn(PlayerType.WHITE)
-//            Pawn(PlayerType.WHITE)
-//            Pawn(PlayerType.WHITE)
-//        }
-//
-//        matrix[7] = Array(sizeX) {
-//            Rook(PlayerType.BLACK)
-//            Knight(PlayerType.BLACK)
-//            Bishop(PlayerType.BLACK)
-//            Queen(PlayerType.BLACK)
-//            King(PlayerType.BLACK)
-//            Bishop(PlayerType.BLACK)
-//            Knight(PlayerType.BLACK)
-//            Rook(PlayerType.BLACK)
-//        }
-//
-//        matrix[6] = Array(sizeX) {
-//            Pawn(PlayerType.BLACK)
-//            Pawn(PlayerType.BLACK)
-//            Pawn(PlayerType.BLACK)
-//            Pawn(PlayerType.BLACK)
-//            Pawn(PlayerType.BLACK)
-//            Pawn(PlayerType.BLACK)
-//            Pawn(PlayerType.BLACK)
-//            Pawn(PlayerType.BLACK)
-//        }
+        matrix[7][0] = Rook(PlayerType.BLACK)
+        matrix[7][1] = Knight(PlayerType.BLACK)
+        matrix[7][2] = Bishop(PlayerType.BLACK)
+        matrix[7][3] = Queen(PlayerType.BLACK)
+        matrix[7][4] = King(PlayerType.BLACK)
+        matrix[7][5] = Bishop(PlayerType.BLACK)
+        matrix[7][6] = Knight(PlayerType.BLACK)
+        matrix[7][7] = Rook(PlayerType.BLACK)
     }
 
     fun getBoardRepresentation(): Array<Array<Int>> {
@@ -88,6 +56,12 @@ class Board(private val sizeX: Int, private val sizeY: Int) {
         }
 
         return map
+    }
+
+    fun processMove(xOrigin: Int, yOrigin: Int, xTarget: Int, yTarget: Int) {
+        val piece = getPiece(Coordinate(xOrigin, yOrigin))
+        matrix[xTarget][yTarget] = piece
+        matrix[xOrigin][yOrigin] = null
     }
 
     fun isValidCoordinate(coordinate: Coordinate): Boolean {
