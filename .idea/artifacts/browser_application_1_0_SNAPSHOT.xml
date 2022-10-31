@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="browser_application-1.0-SNAPSHOT">
+    <output-path>$PROJECT_DIR$/build/libs</output-path>
+    <root id="archive" name="browser_application-1.0-SNAPSHOT.jar">
+      <element id="module-output" name="browser_application.main" />
+    </root>
+  </artifact>
+</component>

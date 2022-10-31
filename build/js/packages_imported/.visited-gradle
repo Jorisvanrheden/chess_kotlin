@@ -1,0 +1,20 @@
+{
+  "version": "9",
+  "items": {
+    "9bb3c0b4affc580c3a595a0342990767": {
+      "src": "/Users/jvanrheden/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-js/1.6.20/1ac82bf3e4b3617f4a7d9db1274fdff6611f9041/kotlin-stdlib-js-1.6.20.jar",
+      "target": "kotlin/1.6.20"
+    },
+    "f01452c530f7baf151596c48fb552b41": {
+      "src": "/Users/jvanrheden/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-common/1.6.20/27b4562b6713d70f458c6d7ea39aadacb8e6a92b/kotlin-stdlib-common-1.6.20.jar"
+    },
+    "77dfccb2b3401a2059e6563ac3b68fa7": {
+      "src": "/Users/jvanrheden/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-test-js-runner/1.6.20/933a879730c4fb13b710c02fd98ce14e110b0f8f/kotlin-test-js-runner-1.6.20.jar",
+      "target": "kotlin-test-js-runner/1.6.20"
+    },
+    "aacd704fa200e6e939784d652c2b125e": {
+      "src": "/Users/jvanrheden/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-test-js/1.6.20/a75a996196a0d39512407f0f824252329aca1d05/kotlin-test-js-1.6.20.jar",
+      "target": "kotlin-test/1.6.20"
+    }
+  }
+}

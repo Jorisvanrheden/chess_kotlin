@@ -1,0 +1,1 @@
+// Kotlin.kotlin_module_metadata(393729, "browser_application-test", "H4sIAAAAAAAAAGPgYBGaw8hlxsUVklpc4pyTmZpXwsWWnV+Sk5nHxeyYV8nFWQKUcC9KTS3hYgnNywSSIAEuFpB6IWMufo7/MMAowCDBwMUkwMjFxsEowARkg2gWIM0CpFmBPBYBNgkGKZ4ZSHqUpCQYjJgMmJwYvHgFmKWYDJg92CdxMHGw7uBgANJcDFJQ10hxQ2hdkPUAcYJdv7cAAAA=");

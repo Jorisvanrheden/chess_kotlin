@@ -1,0 +1,18 @@
+{
+  "name": "browser_application",
+  "version": "1.0-SNAPSHOT",
+  "private": true,
+  "workspaces": [
+    "packages/browser_application",
+    "packages/browser_application-test",
+    "packages_imported/kotlin/1.6.20",
+    "packages_imported/kotlin-test-js-runner/1.6.20",
+    "packages_imported/kotlin-test/1.6.20"
+  ],
+  "resolutions": {},
+  "devDependencies": {},
+  "dependencies": {},
+  "peerDependencies": {},
+  "optionalDependencies": {},
+  "bundledDependencies": []
+}
