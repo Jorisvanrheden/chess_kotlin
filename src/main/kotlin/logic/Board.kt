@@ -2,51 +2,26 @@ package my.qualified.packagename.logic
 
 import my.qualified.packagename.model.Coordinate
 import my.qualified.packagename.model.PlayerType
-import my.qualified.packagename.pieces.Bishop
-import my.qualified.packagename.pieces.King
-import my.qualified.packagename.pieces.Knight
 import my.qualified.packagename.pieces.Piece
-import my.qualified.packagename.pieces.Queen
-import my.qualified.packagename.pieces.Rook
 
-class Board(private val sizeX: Int, private val sizeY: Int) {
-    private var matrix: Array<Array<Piece?>> = Array(sizeX) {
-        Array(sizeY) {
-            null
-        }
-    }
+class Board(private var sizeX: Int, private var sizeY: Int) {
+    private val boardPopulator = BoardPopulator()
+    private var matrix = boardPopulator.generateMatrix()
 
     init {
-        matrix[0][0] = Rook(PlayerType.WHITE)
-        matrix[0][1] = Knight(PlayerType.WHITE)
-        matrix[0][2] = Bishop(PlayerType.WHITE)
-        matrix[0][3] = Queen(PlayerType.WHITE)
-        matrix[0][4] = King(PlayerType.WHITE)
-        matrix[0][5] = Bishop(PlayerType.WHITE)
-        matrix[0][6] = Knight(PlayerType.WHITE)
-        matrix[0][7] = Rook(PlayerType.WHITE)
-
-        matrix[7][0] = Rook(PlayerType.BLACK)
-        matrix[7][1] = Knight(PlayerType.BLACK)
-        matrix[7][2] = Bishop(PlayerType.BLACK)
-        matrix[7][3] = Queen(PlayerType.BLACK)
-        matrix[7][4] = King(PlayerType.BLACK)
-        matrix[7][5] = Bishop(PlayerType.BLACK)
-        matrix[7][6] = Knight(PlayerType.BLACK)
-        matrix[7][7] = Rook(PlayerType.BLACK)
+        sizeX = boardPopulator.getSizeX()
+        sizeY = boardPopulator.getSizeY()
     }
 
     fun getBoardRepresentation(): Array<Array<Int>> {
-        var map: Array<Array<Int>> = Array<Array<Int>>(sizeX) {
+        var map: Array<Array<Int>> = Array(sizeX) {
             Array(sizeY) { 0 }
         }
-
         for (i in 0 until sizeX) {
             for (j in 0 until sizeY) {
                 val piece = matrix[i][j]
                 if (piece != null) {
                     var typeId = piece.getTypeId()
-                    console.log(typeId)
                     if (piece.playerType == PlayerType.BLACK) typeId += 6
                     map[i][j] = typeId
                 } else {
@@ -54,14 +29,25 @@ class Board(private val sizeX: Int, private val sizeY: Int) {
                 }
             }
         }
-
         return map
     }
 
-    fun processMove(xOrigin: Int, yOrigin: Int, xTarget: Int, yTarget: Int) {
-        val piece = getPiece(Coordinate(xOrigin, yOrigin))
-        matrix[xTarget][yTarget] = piece
-        matrix[xOrigin][yOrigin] = null
+    fun getMoves(origin: Coordinate): List<Coordinate> {
+        val piece = getPiece(origin) ?: return emptyList()
+        val moves = piece.getMoves(origin, this)
+
+        // Validate all moves based on game logic
+
+        return moves
+    }
+
+    fun processMove(origin: Coordinate, target: Coordinate) {
+        val piece = getPiece(origin)
+        matrix[target.x][target.y] = piece
+        matrix[origin.x][origin.y] = null
+
+        // Store the move for each piece
+        piece?.storeMove(origin, target)
     }
 
     fun isValidCoordinate(coordinate: Coordinate): Boolean {
