@@ -1,6 +1,7 @@
 package my.qualified.packagename
 
 import my.qualified.packagename.logic.Board
+import my.qualified.packagename.logic.MoveHandler
 import my.qualified.packagename.model.Coordinate
 
 fun main() {
@@ -17,24 +18,21 @@ class Coord(val x: Int, val y: Int)
 class Wrapper(val sizeX: Int, val sizeY: Int) {
     private val board: Board = Board(sizeX, sizeY)
 
+    private var moveHandler: MoveHandler
+
     init {
         getMoves(0, 0)
+        moveHandler = MoveHandler(board)
     }
 
     fun processMove(xOrigin: Int, yOrigin: Int, xTarget: Int, yTarget: Int) {
-        board.processMove(xOrigin, yOrigin, xTarget, yTarget)
+        moveHandler.processMove(Coordinate(xOrigin, yOrigin), Coordinate(xTarget, yTarget))
     }
 
     fun getMoves(x: Int, y: Int): Array<Coord> {
-        val coordinate = Coordinate(x, y)
-        val piece = board.getPiece(coordinate) ?: return emptyArray()
-        val moves = piece.getMoves(coordinate, board)
-
-        var movePairs = mutableListOf<Coord>()
-        for (m in moves) {
-            movePairs.add(Coord(m.x, m.y))
-        }
-        return movePairs.toTypedArray()
+        return board.getMoves(
+            Coordinate(x, y)
+        ).map { Coord(it.x, it.y) }.toTypedArray()
     }
 
     fun getBoardRepresentation(): Array<Array<Int>> {
