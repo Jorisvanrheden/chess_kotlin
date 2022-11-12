@@ -24,16 +24,29 @@ class MoveHandler(private var board: Board) {
         }
 
         // Check if the selected move is indeed part of the available moves
-        // TODO: retrieve the moveset given the selected starting coordinate
         // The selected moveset itself can contain more than 1 move, which is not displayed in the target coordinate
         // This way the original coordinate can also be validated, verifying the target coordinate of the piece
-        if (board.getMoves(origin).none { it.x == target.x && it.y == target.y }) {
+        val moveSets = board.getMoveSets(origin)
+        if (moveSets.isEmpty()) {
+            println("The selected move is not possible for the selected piece")
+            return
+        }
+
+        // Loop through all move sets, finding the moveset of which the origin and target
+        // are both contained in the first move of the set
+        val filteredMoveSets = moveSets.filter {
+            it.moves[0].origin.x == origin.x &&
+                it.moves[0].origin.y == origin.y &&
+                it.moves[0].target.x == target.x &&
+                it.moves[0].target.y == target.y
+        }
+        if (filteredMoveSets.isEmpty()) {
             println("The selected move is not possible for the selected piece")
             return
         }
 
         // Process move
-        board.processMove(origin, target)
+        board.processMove(filteredMoveSets[0])
 
         // Iterate selected player counter
         processMoveEnd()

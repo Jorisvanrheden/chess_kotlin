@@ -3,11 +3,13 @@ package my.qualified.packagename.pieces
 import my.qualified.packagename.logic.Board
 import my.qualified.packagename.model.Coordinate
 import my.qualified.packagename.model.Direction
+import my.qualified.packagename.model.Move
+import my.qualified.packagename.model.MoveSet
 import my.qualified.packagename.model.PlayerType
 import my.qualified.packagename.moves.getMovesInDirection
 
 class Rook(playerType: PlayerType) : Piece(playerType) {
-    override fun getMoves(coordinate: Coordinate, board: Board): List<Coordinate> {
+    override fun getMoves(coordinate: Coordinate, board: Board): List<MoveSet> {
         var coordinates = mutableListOf<Coordinate>()
         val directions = listOf(
             Direction(1, 0),
@@ -20,7 +22,7 @@ class Rook(playerType: PlayerType) : Piece(playerType) {
                 getMovesInDirection(direction, coordinate, board)
             )
         }
-        return coordinates
+        return coordinates.map { MoveSet(listOf(Move(coordinate, it))) }
     }
 
     override fun getTypeId(): Int {

@@ -30,9 +30,9 @@ class Wrapper(val sizeX: Int, val sizeY: Int) {
     }
 
     fun getMoves(x: Int, y: Int): Array<Coord> {
-        return board.getMoves(
+        return board.getMoveSets(
             Coordinate(x, y)
-        ).map { Coord(it.x, it.y) }.toTypedArray()
+        ).map { Coord(it.moves[0].target.x, it.moves[0].target.y) }.toTypedArray()
     }
 
     fun getBoardRepresentation(): Array<Array<Int>> {

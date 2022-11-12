@@ -1,6 +1,7 @@
 package my.qualified.packagename.logic
 
 import my.qualified.packagename.model.Coordinate
+import my.qualified.packagename.model.Move
 import my.qualified.packagename.model.MoveSet
 import my.qualified.packagename.model.PlayerType
 import my.qualified.packagename.pieces.Piece
@@ -35,14 +36,14 @@ class Board(private var sizeX: Int, private var sizeY: Int) {
         return map
     }
 
-    fun getLastMove(): MoveSet? {
+    fun getLastMove(): Move? {
         if (history.size > 0) {
-            return history[history.size - 1]
+            return history[history.size - 1].moves[0]
         }
         return null
     }
 
-    fun getMoves(origin: Coordinate): List<Coordinate> {
+    fun getMoveSets(origin: Coordinate): List<MoveSet> {
         val piece = getPiece(origin) ?: return emptyList()
         val moves = piece.getMoves(origin, this)
 
@@ -51,15 +52,15 @@ class Board(private var sizeX: Int, private var sizeY: Int) {
         return moves
     }
 
-    fun processMove(origin: Coordinate, target: Coordinate) {
-        val piece = getPiece(origin)
-        matrix[target.x][target.y] = piece
-        matrix[origin.x][origin.y] = null
+    fun processMove(moveSet: MoveSet) {
+        for (move in moveSet.moves) {
+            val piece = getPiece(move.origin)
+            matrix[move.target.x][move.target.y] = piece
+            matrix[move.origin.x][move.origin.y] = null
 
-        val moveSet = MoveSet(origin, target)
-
-        // Store the move for each piece
-        piece?.storeMove(moveSet)
+            // Store the move for each piece
+            piece?.storeMove(move)
+        }
         history.add(moveSet)
     }
 

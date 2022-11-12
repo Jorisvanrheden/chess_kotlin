@@ -3,14 +3,16 @@ package my.qualified.packagename.pieces
 import my.qualified.packagename.logic.Board
 import my.qualified.packagename.model.Coordinate
 import my.qualified.packagename.model.Direction
+import my.qualified.packagename.model.Move
+import my.qualified.packagename.model.MoveSet
 import my.qualified.packagename.model.PlayerType
 
 class King(playerType: PlayerType, private val connectedPieces: List<Piece>) : Piece(playerType) {
-    override fun getMoves(coordinate: Coordinate, board: Board): List<Coordinate> {
+    override fun getMoves(coordinate: Coordinate, board: Board): List<MoveSet> {
         var moves = mutableListOf<Coordinate>()
         moves.addAll(getDefaultMoves(coordinate, board))
         moves.addAll(getCastlingMoves(coordinate, board))
-        return moves
+        return moves.map { MoveSet(listOf(Move(coordinate, it))) }
     }
 
     private fun getDefaultMoves(coordinate: Coordinate, board: Board): List<Coordinate> {

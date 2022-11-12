@@ -2,17 +2,18 @@ package my.qualified.packagename.pieces
 
 import my.qualified.packagename.logic.Board
 import my.qualified.packagename.model.Coordinate
+import my.qualified.packagename.model.Move
 import my.qualified.packagename.model.MoveSet
 import my.qualified.packagename.model.PlayerType
 
 abstract class Piece(val playerType: PlayerType) {
-    private var moveHistory = mutableListOf<MoveSet>()
+    private var moveHistory = mutableListOf<Move>()
 
     private var coordinate: Coordinate = Coordinate(0, 0)
 
-    fun storeMove(moveSet: MoveSet) {
-        moveHistory.add(moveSet)
-        setCurrentCoordinate(moveSet.target)
+    fun storeMove(move: Move) {
+        moveHistory.add(move)
+        setCurrentCoordinate(move.target)
     }
     fun getMoveCount(): Int {
         return moveHistory.size
@@ -24,7 +25,7 @@ abstract class Piece(val playerType: PlayerType) {
         return this.coordinate
     }
 
-    abstract fun getMoves(coordinate: Coordinate, board: Board): List<Coordinate>
+    abstract fun getMoves(coordinate: Coordinate, board: Board): List<MoveSet>
 
     abstract fun getTypeId(): Int
 }
