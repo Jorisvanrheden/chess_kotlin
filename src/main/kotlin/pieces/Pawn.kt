@@ -101,7 +101,7 @@ class Pawn(playerType: PlayerType, private val direction: Direction) : Piece(pla
     }
 
     private fun getMaxMoveSize(): Int {
-        return if (moveCount == 0) FIRST_MOVE_DISTANCE else DEFAULT_MOVE_DISTANCE
+        return if (getMoveCount() == 0) FIRST_MOVE_DISTANCE else DEFAULT_MOVE_DISTANCE
     }
 
     override fun getTypeId(): Int {

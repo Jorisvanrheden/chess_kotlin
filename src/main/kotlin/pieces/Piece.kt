@@ -20,6 +20,9 @@ abstract class Piece(val playerType: PlayerType) {
     fun setCurrentCoordinate(coordinate: Coordinate) {
         this.coordinate = coordinate
     }
+    fun getCurrentCoordinate(): Coordinate {
+        return this.coordinate
+    }
 
     abstract fun getMoves(coordinate: Coordinate, board: Board): List<Coordinate>
 

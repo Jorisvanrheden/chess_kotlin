@@ -24,6 +24,9 @@ class MoveHandler(private var board: Board) {
         }
 
         // Check if the selected move is indeed part of the available moves
+        // TODO: retrieve the moveset given the selected starting coordinate
+        // The selected moveset itself can contain more than 1 move, which is not displayed in the target coordinate
+        // This way the original coordinate can also be validated, verifying the target coordinate of the piece
         if (board.getMoves(origin).none { it.x == target.x && it.y == target.y }) {
             println("The selected move is not possible for the selected piece")
             return
