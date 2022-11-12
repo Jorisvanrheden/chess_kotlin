@@ -1,12 +1,15 @@
 package my.qualified.packagename.logic
 
 import my.qualified.packagename.model.Coordinate
+import my.qualified.packagename.model.MoveSet
 import my.qualified.packagename.model.PlayerType
 import my.qualified.packagename.pieces.Piece
 
 class Board(private var sizeX: Int, private var sizeY: Int) {
     private val boardPopulator = BoardPopulator()
     private var matrix = boardPopulator.generateMatrix()
+
+    private var history = mutableListOf<MoveSet>()
 
     init {
         sizeX = boardPopulator.getSizeX()
@@ -32,6 +35,13 @@ class Board(private var sizeX: Int, private var sizeY: Int) {
         return map
     }
 
+    fun getLastMove(): MoveSet? {
+        if (history.size > 0) {
+            return history[history.size - 1]
+        }
+        return null
+    }
+
     fun getMoves(origin: Coordinate): List<Coordinate> {
         val piece = getPiece(origin) ?: return emptyList()
         val moves = piece.getMoves(origin, this)
@@ -46,8 +56,11 @@ class Board(private var sizeX: Int, private var sizeY: Int) {
         matrix[target.x][target.y] = piece
         matrix[origin.x][origin.y] = null
 
+        val moveSet = MoveSet(origin, target)
+
         // Store the move for each piece
-        piece?.storeMove(origin, target)
+        piece?.storeMove(moveSet)
+        history.add(moveSet)
     }
 
     fun isValidCoordinate(coordinate: Coordinate): Boolean {
