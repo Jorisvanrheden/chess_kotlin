@@ -6,10 +6,19 @@ import my.qualified.packagename.model.MoveSet
 import my.qualified.packagename.model.PlayerType
 
 abstract class Piece(val playerType: PlayerType) {
-    protected var moveCount: Int = 0
+    private var moveHistory = mutableListOf<MoveSet>()
+
+    private var coordinate: Coordinate = Coordinate(0, 0)
 
     fun storeMove(moveSet: MoveSet) {
-        moveCount++
+        moveHistory.add(moveSet)
+        setCurrentCoordinate(moveSet.target)
+    }
+    fun getMoveCount(): Int {
+        return moveHistory.size
+    }
+    fun setCurrentCoordinate(coordinate: Coordinate) {
+        this.coordinate = coordinate
     }
 
     abstract fun getMoves(coordinate: Coordinate, board: Board): List<Coordinate>

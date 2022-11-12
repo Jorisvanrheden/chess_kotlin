@@ -1,5 +1,6 @@
 package my.qualified.packagename.logic
 
+import my.qualified.packagename.model.Coordinate
 import my.qualified.packagename.model.Direction
 import my.qualified.packagename.model.PlayerType
 import my.qualified.packagename.pieces.Bishop
@@ -21,31 +22,40 @@ class BoardPopulator() {
     fun getSizeY(): Int = SIZE_Y
 
     fun generateMatrix(): Array<Array<Piece?>> {
-        matrix[0][0] = Rook(PlayerType.BLACK)
-        matrix[1][0] = Knight(PlayerType.BLACK)
-        matrix[2][0] = Bishop(PlayerType.BLACK)
-        matrix[3][0] = Queen(PlayerType.BLACK)
-        matrix[4][0] = King(PlayerType.BLACK)
-        matrix[5][0] = Bishop(PlayerType.BLACK)
-        matrix[6][0] = Knight(PlayerType.BLACK)
-        matrix[7][0] = Rook(PlayerType.BLACK)
+        val blackRookLong = Rook(PlayerType.BLACK)
+        val blackRookShort = Rook(PlayerType.BLACK)
+        setPieceAtCoordinate(blackRookLong, Coordinate(0, 0))
+        setPieceAtCoordinate(Knight(PlayerType.BLACK), Coordinate(1, 0))
+        setPieceAtCoordinate(Bishop(PlayerType.BLACK), Coordinate(2, 0))
+        setPieceAtCoordinate(Queen(PlayerType.BLACK), Coordinate(3, 0))
+        setPieceAtCoordinate(King(PlayerType.BLACK, listOf(blackRookLong, blackRookShort)), Coordinate(4, 0))
+        setPieceAtCoordinate(Bishop(PlayerType.BLACK), Coordinate(5, 0))
+        setPieceAtCoordinate(Knight(PlayerType.BLACK), Coordinate(6, 0))
+        setPieceAtCoordinate(blackRookShort, Coordinate(7, 0))
         for (i in 0 until SIZE_X) {
-            matrix[i][1] = Pawn(PlayerType.BLACK, Direction(0, 1))
+            setPieceAtCoordinate(Pawn(PlayerType.BLACK, Direction(0, -1)), Coordinate(i, 1))
         }
 
-        matrix[0][7] = Rook(PlayerType.WHITE)
-        matrix[1][7] = Knight(PlayerType.WHITE)
-        matrix[2][7] = Bishop(PlayerType.WHITE)
-        matrix[3][7] = Queen(PlayerType.WHITE)
-        matrix[4][7] = King(PlayerType.WHITE)
-        matrix[5][7] = Bishop(PlayerType.WHITE)
-        matrix[6][7] = Knight(PlayerType.WHITE)
-        matrix[7][7] = Rook(PlayerType.WHITE)
+        val whiteRookLong = Rook(PlayerType.WHITE)
+        val whiteRookShort = Rook(PlayerType.WHITE)
+        setPieceAtCoordinate(whiteRookLong, Coordinate(0, 7))
+        setPieceAtCoordinate(Knight(PlayerType.WHITE), Coordinate(1, 7))
+        setPieceAtCoordinate(Bishop(PlayerType.WHITE), Coordinate(2, 7))
+        setPieceAtCoordinate(Queen(PlayerType.WHITE), Coordinate(3, 7))
+        setPieceAtCoordinate(King(PlayerType.WHITE, listOf(whiteRookLong, whiteRookShort)), Coordinate(4, 7))
+        setPieceAtCoordinate(Bishop(PlayerType.WHITE), Coordinate(5, 7))
+        setPieceAtCoordinate(Knight(PlayerType.WHITE), Coordinate(6, 7))
+        setPieceAtCoordinate(whiteRookShort, Coordinate(7, 7))
         for (i in 0 until SIZE_X) {
-            matrix[i][6] = Pawn(PlayerType.WHITE, Direction(0, -1))
+            setPieceAtCoordinate(Pawn(PlayerType.WHITE, Direction(0, 1)), Coordinate(i, 6))
         }
 
         return matrix
+    }
+
+    private fun setPieceAtCoordinate(piece: Piece, coordinate: Coordinate) {
+        matrix[coordinate.x][coordinate.y] = piece
+        piece.setCurrentCoordinate(coordinate)
     }
 
     private companion object {
