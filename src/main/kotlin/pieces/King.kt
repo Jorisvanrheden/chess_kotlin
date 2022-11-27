@@ -36,7 +36,19 @@ class King(playerType: PlayerType, private val connectedPieces: List<Piece>) : P
                 moves.add((targetCoordinate))
             }
         }
-        return moves.map { MoveSet(listOf(Move(coordinate, it))) }
+
+        return moves.map {
+            MoveSet(
+                listOf(
+                    Move(
+                        board.getPiece(coordinate),
+                        getTargets(it, board),
+                        coordinate,
+                        it
+                    )
+                )
+            )
+        }
     }
 
     private fun getCastlingMoves(coordinate: Coordinate, board: Board): List<MoveSet> {
@@ -56,6 +68,8 @@ class King(playerType: PlayerType, private val connectedPieces: List<Piece>) : P
             val moves = mutableListOf<Move>()
             moves.add(
                 Move(
+                    board.getPiece(coordinate),
+                    emptyList(),
                     coordinate,
                     Coordinate(
                         coordinate.x + direction.x * CASTLING_MOVE_DISTANCE,
@@ -66,6 +80,8 @@ class King(playerType: PlayerType, private val connectedPieces: List<Piece>) : P
             // move the interacting piece one unit next to this piece on the other side
             moves.add(
                 Move(
+                    board.getPiece(coordinate),
+                    emptyList(),
                     connectedPiece.getCurrentCoordinate(),
                     Coordinate(
                         coordinate.x + direction.x * CASTLING_MOVE_DISTANCE - direction.x * 1,

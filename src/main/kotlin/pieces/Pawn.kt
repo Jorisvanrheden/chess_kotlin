@@ -14,7 +14,18 @@ class Pawn(playerType: PlayerType, private val direction: Direction) : Piece(pla
         moves.addAll(getDefaultMoves(coordinate, board))
         moves.addAll(getAttackingMoves(coordinate, board))
         moves.addAll(getEnPassantMoves(coordinate, board))
-        return moves.map { MoveSet(listOf(Move(coordinate, it))) }
+        return moves.map {
+            MoveSet(
+                listOf(
+                    Move(
+                        board.getPiece(coordinate),
+                        getTargets(it, board),
+                        coordinate,
+                        it
+                    )
+                )
+            )
+        }
     }
 
     private fun getDefaultMoves(coordinate: Coordinate, board: Board): List<Coordinate> {
@@ -56,33 +67,33 @@ class Pawn(playerType: PlayerType, private val direction: Direction) : Piece(pla
         val lastMoveSet = board.getLastMove()
         if (lastMoveSet != null) {
             // target should be an enemy pawn
-            val piece = board.getPiece(lastMoveSet.target) ?: return moves
+            val piece = board.getPiece(lastMoveSet.to) ?: return moves
             if (piece.playerType == playerType) return moves
 
             // piece should be a pawn
             if (piece.getTypeId() != getTypeId()) return moves
 
             // piece should have moved the large amount
-            val pieceMoveDistance = (lastMoveSet.target.x - lastMoveSet.origin.x) +
-                (lastMoveSet.target.y - lastMoveSet.origin.y)
+            val pieceMoveDistance = (lastMoveSet.to.x - lastMoveSet.from.x) +
+                (lastMoveSet.to.y - lastMoveSet.from.y)
             if (pieceMoveDistance != FIRST_MOVE_DISTANCE) return moves
 
             if (direction.x == 1 || direction.x == -1) {
-                if (abs(lastMoveSet.target.y - coordinate.y) == 1) {
+                if (abs(lastMoveSet.to.y - coordinate.y) == 1) {
                     moves.add(
                         Coordinate(
                             coordinate.x + direction.x,
-                            lastMoveSet.target.y
+                            lastMoveSet.to.y
                         )
                     )
                 }
             }
             if (direction.y == 1 || direction.y == -1) {
                 // if the piece is right next to the current piece
-                if (abs(lastMoveSet.target.x - coordinate.x) == 1) {
+                if (abs(lastMoveSet.to.x - coordinate.x) == 1) {
                     moves.add(
                         Coordinate(
-                            lastMoveSet.target.x,
+                            lastMoveSet.to.x,
                             coordinate.y + direction.y
                         )
                     )

@@ -8,7 +8,7 @@ import my.qualified.packagename.model.PlayerType
 
 class Knight(playerType: PlayerType) : Piece(playerType) {
     override fun getMoves(coordinate: Coordinate, board: Board): List<MoveSet> {
-        var coordinates = mutableListOf<Coordinate>()
+        var moves = mutableListOf<Coordinate>()
         val targetCoordinates = listOf(
             Coordinate(coordinate.x - 1, coordinate.y + 2),
             Coordinate(coordinate.x + 1, coordinate.y + 2),
@@ -21,10 +21,21 @@ class Knight(playerType: PlayerType) : Piece(playerType) {
         )
         for (targetCoordinate in targetCoordinates) {
             if (board.isValidMove(coordinate, targetCoordinate)) {
-                coordinates.add((targetCoordinate))
+                moves.add((targetCoordinate))
             }
         }
-        return coordinates.map { MoveSet(listOf(Move(coordinate, it))) }
+        return moves.map {
+            MoveSet(
+                listOf(
+                    Move(
+                        board.getPiece(coordinate),
+                        getTargets(it, board),
+                        coordinate,
+                        it
+                    )
+                )
+            )
+        }
     }
 
     override fun getTypeId(): Int {

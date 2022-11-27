@@ -29,10 +29,14 @@ class Wrapper(val sizeX: Int, val sizeY: Int) {
         moveHandler.processMove(Coordinate(xOrigin, yOrigin), Coordinate(xTarget, yTarget))
     }
 
+    fun undoMove() {
+        board.undoLatestMoveSet()
+    }
+
     fun getMoves(x: Int, y: Int): Array<Coord> {
         return board.getMoveSets(
             Coordinate(x, y)
-        ).map { Coord(it.moves[0].target.x, it.moves[0].target.y) }.toTypedArray()
+        ).map { Coord(it.moves[0].to.x, it.moves[0].to.y) }.toTypedArray()
     }
 
     fun getBoardRepresentation(): Array<Array<Int>> {

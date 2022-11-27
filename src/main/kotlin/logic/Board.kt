@@ -48,26 +48,69 @@ class Board(private var sizeX: Int, private var sizeY: Int) {
         val moves = piece.getMoves(origin, this)
 
         // Validate all moves based on game logic
-
-        return moves
+        return moves.filter { isLegalMove(it) }
     }
 
-    fun processMove(moveSet: MoveSet) {
-        for (move in moveSet.moves) {
-            val piece = getPiece(move.origin)
-            matrix[move.target.x][move.target.y] = piece
-            matrix[move.origin.x][move.origin.y] = null
+    fun undoLatestMoveSet() {
+        if (history.isEmpty()) return
 
-            // Store the move for each piece
-            piece?.storeMove(move)
+        val moveSet = history[history.size - 1]
+
+        for (move in moveSet.moves) {
+            undoMove(move)
+        }
+
+        history.removeLast()
+    }
+
+    fun applyMoveSet(moveSet: MoveSet) {
+        for (move in moveSet.moves) {
+            applyMove(move)
         }
         history.add(moveSet)
+    }
+
+    fun undoMove(move: Move) {
+        // To undo, the active piece must be set back to the from position
+        setPieceAt(move.from, move.activePiece)
+
+        // Set the target to null - it is important this happens before the targets are reset
+        // In case no target, the square is still set properly, but otherwise targets are overwritten again
+        setPieceAt(move.to, null)
+
+        // Set the targets back to the pieces that were located there
+        for (target in move.targets) {
+            setPieceAt(target.getCurrentCoordinate(), target)
+        }
+
+        // Undo the piece history update
+        move.activePiece?.removeLastCoordinate()
+    }
+
+    fun applyMove(move: Move) {
+        // set the origin to null
+        setPieceAt(move.from, null)
+
+        // set all targets to null
+        for (target in move.targets) {
+            setPieceAt(target.getCurrentCoordinate(), null)
+        }
+
+        // set the active piece end location
+        setPieceAt(move.to, move.activePiece)
+
+        // Store the move for each piece
+        move.activePiece?.storeMove(move)
     }
 
     fun isValidCoordinate(coordinate: Coordinate): Boolean {
         if (coordinate.x < 0 || coordinate.x >= sizeX) return false
         if (coordinate.y < 0 || coordinate.y >= sizeY) return false
         return true
+    }
+
+    fun setPieceAt(coordinate: Coordinate, piece: Piece?) {
+        matrix[coordinate.x][coordinate.y] = piece
     }
 
     fun getPiece(coordinate: Coordinate): Piece? =
@@ -99,5 +142,14 @@ class Board(private var sizeX: Int, private var sizeY: Int) {
         } else {
             true
         }
+    }
+
+    private fun isLegalMove(moveSet: MoveSet): Boolean {
+        // Find all enemy attacking squares
+
+        // check if own king is in check
+
+        // move is valid is own king is not in check
+        return true
     }
 }

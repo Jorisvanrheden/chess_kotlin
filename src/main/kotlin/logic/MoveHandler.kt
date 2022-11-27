@@ -35,10 +35,10 @@ class MoveHandler(private var board: Board) {
         // Loop through all move sets, finding the moveset of which the origin and target
         // are both contained in the first move of the set
         val filteredMoveSets = moveSets.filter {
-            it.moves[0].origin.x == origin.x &&
-                it.moves[0].origin.y == origin.y &&
-                it.moves[0].target.x == target.x &&
-                it.moves[0].target.y == target.y
+            it.moves[0].from.x == origin.x &&
+                it.moves[0].from.y == origin.y &&
+                it.moves[0].to.x == target.x &&
+                it.moves[0].to.y == target.y
         }
         if (filteredMoveSets.isEmpty()) {
             println("The selected move is not possible for the selected piece")
@@ -46,7 +46,7 @@ class MoveHandler(private var board: Board) {
         }
 
         // Process move
-        board.processMove(filteredMoveSets[0])
+        board.applyMoveSet(filteredMoveSets[0])
 
         // Iterate selected player counter
         processMoveEnd()

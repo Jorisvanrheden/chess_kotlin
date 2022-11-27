@@ -10,7 +10,7 @@ import my.qualified.packagename.moves.getMovesInDirection
 
 class Rook(playerType: PlayerType) : Piece(playerType) {
     override fun getMoves(coordinate: Coordinate, board: Board): List<MoveSet> {
-        var coordinates = mutableListOf<Coordinate>()
+        var moves = mutableListOf<Coordinate>()
         val directions = listOf(
             Direction(1, 0),
             Direction(-1, 0),
@@ -18,11 +18,22 @@ class Rook(playerType: PlayerType) : Piece(playerType) {
             Direction(0, -1)
         )
         for (direction in directions) {
-            coordinates.addAll(
+            moves.addAll(
                 getMovesInDirection(direction, coordinate, board)
             )
         }
-        return coordinates.map { MoveSet(listOf(Move(coordinate, it))) }
+        return moves.map {
+            MoveSet(
+                listOf(
+                    Move(
+                        board.getPiece(coordinate),
+                        getTargets(it, board),
+                        coordinate,
+                        it
+                    )
+                )
+            )
+        }
     }
 
     override fun getTypeId(): Int {
