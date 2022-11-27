@@ -15,7 +15,7 @@ fun main() {
 class Coord(val x: Int, val y: Int)
 
 @JsExport
-class Wrapper(val sizeX: Int, val sizeY: Int) {
+class Wrapper(private val sizeX: Int, private val sizeY: Int) {
     private val board: Board = Board(sizeX, sizeY)
 
     private var moveHandler: MoveHandler
@@ -30,7 +30,7 @@ class Wrapper(val sizeX: Int, val sizeY: Int) {
     }
 
     fun undoMove() {
-        board.undoLatestMoveSet()
+        moveHandler.undoMove()
     }
 
     fun getMoves(x: Int, y: Int): Array<Coord> {

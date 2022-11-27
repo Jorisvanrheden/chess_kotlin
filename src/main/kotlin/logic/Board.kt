@@ -51,8 +51,8 @@ class Board(private var sizeX: Int, private var sizeY: Int) {
         return moves.filter { isLegalMove(it) }
     }
 
-    fun undoLatestMoveSet() {
-        if (history.isEmpty()) return
+    fun undoLatestMoveSet(): Boolean {
+        if (history.isEmpty()) return false
 
         val moveSet = history[history.size - 1]
 
@@ -61,6 +61,8 @@ class Board(private var sizeX: Int, private var sizeY: Int) {
         }
 
         history.removeLast()
+
+        return true
     }
 
     fun applyMoveSet(moveSet: MoveSet) {

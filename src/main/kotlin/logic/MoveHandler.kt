@@ -49,11 +49,25 @@ class MoveHandler(private var board: Board) {
         board.applyMoveSet(filteredMoveSets[0])
 
         // Iterate selected player counter
-        processMoveEnd()
+        selectNextPlayer()
     }
 
-    private fun processMoveEnd() {
+    fun undoMove() {
+        val result = board.undoLatestMoveSet()
+
+        if (result) {
+            // Count back selected player counter
+            selectPreviousPlayer()
+        }
+    }
+
+    private fun selectNextPlayer() {
         selectedPlayerIndex++
+        selectedPlayerIndex %= players.size
+    }
+
+    private fun selectPreviousPlayer() {
+        selectedPlayerIndex--
         selectedPlayerIndex %= players.size
     }
 }

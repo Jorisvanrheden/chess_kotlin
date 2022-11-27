@@ -53,6 +53,8 @@ class Pawn(playerType: PlayerType, private val direction: Direction) : Piece(pla
             )
         )
         for (attackingCoordinate in attackingCoordinates) {
+            if (!board.isValidCoordinate(attackingCoordinate)) continue
+
             // Requires an enemy piece
             val piece = board.getPiece(attackingCoordinate) ?: continue
             if (piece.playerType != playerType) {
@@ -80,23 +82,25 @@ class Pawn(playerType: PlayerType, private val direction: Direction) : Piece(pla
 
             if (direction.x == 1 || direction.x == -1) {
                 if (abs(lastMoveSet.to.y - coordinate.y) == 1) {
-                    moves.add(
-                        Coordinate(
-                            coordinate.x + direction.x,
-                            lastMoveSet.to.y
-                        )
+                    val target = Coordinate(
+                        coordinate.x + direction.x,
+                        lastMoveSet.to.y
                     )
+                    if (board.isValidCoordinate(target)) {
+                        moves.add(target)
+                    }
                 }
             }
             if (direction.y == 1 || direction.y == -1) {
                 // if the piece is right next to the current piece
                 if (abs(lastMoveSet.to.x - coordinate.x) == 1) {
-                    moves.add(
-                        Coordinate(
-                            lastMoveSet.to.x,
-                            coordinate.y + direction.y
-                        )
+                    val target = Coordinate(
+                        lastMoveSet.to.x,
+                        coordinate.y + direction.y
                     )
+                    if (board.isValidCoordinate(target)) {
+                        moves.add(target)
+                    }
                 }
             }
         }
