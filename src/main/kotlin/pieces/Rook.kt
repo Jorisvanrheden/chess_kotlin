@@ -5,6 +5,7 @@ import my.qualified.packagename.model.Coordinate
 import my.qualified.packagename.model.Direction
 import my.qualified.packagename.model.Move
 import my.qualified.packagename.model.MoveSet
+import my.qualified.packagename.model.PieceType
 import my.qualified.packagename.model.PlayerType
 import my.qualified.packagename.moves.getMovesInDirection
 
@@ -36,7 +37,7 @@ class Rook(playerType: PlayerType) : Piece(playerType) {
         }
     }
 
-    override fun getTypeId(): Int {
-        return 5
+    override fun getTypeId(): PieceType {
+        return PieceType.ROOK
     }
 }

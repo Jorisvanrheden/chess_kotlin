@@ -3,12 +3,13 @@ package my.qualified.packagename.logic
 import my.qualified.packagename.model.Coordinate
 import my.qualified.packagename.model.Move
 import my.qualified.packagename.model.MoveSet
+import my.qualified.packagename.model.PieceType
 import my.qualified.packagename.model.PlayerType
 import my.qualified.packagename.pieces.Piece
 
 class Board(private var sizeX: Int, private var sizeY: Int) {
     private val boardPopulator = BoardPopulator()
-    private var matrix = boardPopulator.generateMatrix()
+    private var matrix: Array<Array<Piece?>> = boardPopulator.generateMatrix()
 
     private var history = mutableListOf<MoveSet>()
 
@@ -25,7 +26,7 @@ class Board(private var sizeX: Int, private var sizeY: Int) {
             for (j in 0 until sizeY) {
                 val piece = matrix[i][j]
                 if (piece != null) {
-                    var typeId = piece.getTypeId()
+                    var typeId = piece.getTypeId().id
                     if (piece.playerType == PlayerType.BLACK) typeId += 6
                     map[i][j] = typeId
                 } else {
@@ -48,7 +49,7 @@ class Board(private var sizeX: Int, private var sizeY: Int) {
         val moves = piece.getMoves(origin, this)
 
         // Validate all moves based on game logic
-        return moves.filter { isLegalMove(it) }
+        return moves.filter { isLegalMove(it, piece.playerType) }
     }
 
     fun undoLatestMoveSet(): Boolean {
@@ -72,7 +73,7 @@ class Board(private var sizeX: Int, private var sizeY: Int) {
         history.add(moveSet)
     }
 
-    fun undoMove(move: Move) {
+    private fun undoMove(move: Move) {
         // To undo, the active piece must be set back to the from position
         setPieceAt(move.from, move.activePiece)
 
@@ -89,7 +90,7 @@ class Board(private var sizeX: Int, private var sizeY: Int) {
         move.activePiece?.removeLastCoordinate()
     }
 
-    fun applyMove(move: Move) {
+    private fun applyMove(move: Move) {
         // set the origin to null
         setPieceAt(move.from, null)
 
@@ -146,12 +147,68 @@ class Board(private var sizeX: Int, private var sizeY: Int) {
         }
     }
 
-    private fun isLegalMove(moveSet: MoveSet): Boolean {
+    private fun isLegalMove(moveSet: MoveSet, type: PlayerType): Boolean {
+        println("Applying.. $moveSet")
+        // Apply the move temporarily
+        applyMoveSet(moveSet)
+
         // Find all enemy attacking squares
+        val enemyTargets = getEnemyTargets(type)
+
+        println("Enemy targets: $enemyTargets")
+
+        // Undo the temporary move
+        undoLatestMoveSet()
 
         // check if own king is in check
+        val king = getKing(type) ?: return false
 
-        // move is valid is own king is not in check
-        return true
+        println("Own king: $king")
+
+        // move is valid if own king is not in check
+        return !enemyTargets.contains(king.getCurrentCoordinate())
+//        return enemyTargets.filter {
+//            it.x == king.getCurrentCoordinate().x &&
+//                it.y == king.getCurrentCoordinate().y
+//        }.isEmpty()
+    }
+
+    private fun getEnemyTargets(type: PlayerType): List<Coordinate> {
+        var moves = mutableListOf<Coordinate>()
+
+        val enemyPieces = getEnemyPieces(type)
+        for (piece in enemyPieces) {
+            val moveSets = piece.getMoves(piece.getCurrentCoordinate(), this)
+            for (moveSet in moveSets) {
+                moves.addAll(moveSet.moves.map { it.to })
+            }
+        }
+        return moves
+    }
+
+    private fun getEnemyPieces(type: PlayerType): List<Piece> {
+        var pieces = mutableListOf<Piece>()
+        for (i in 0 until matrix.size) {
+            for (j in 0 until matrix[0].size) {
+                val piece = getPiece(Coordinate(i, j)) ?: continue
+
+                if (piece.playerType == type)continue
+                pieces.add(piece)
+            }
+        }
+        return pieces
+    }
+
+    private fun getKing(type: PlayerType): Piece? {
+        for (i in 0 until matrix.size) {
+            for (j in 0 until matrix[0].size) {
+                val piece = getPiece(Coordinate(i, j)) ?: continue
+
+                if (piece.playerType == type && piece.getTypeId() == PieceType.KING) {
+                    return piece
+                }
+            }
+        }
+        return null
     }
 }

@@ -5,6 +5,7 @@ import my.qualified.packagename.model.Coordinate
 import my.qualified.packagename.model.Direction
 import my.qualified.packagename.model.Move
 import my.qualified.packagename.model.MoveSet
+import my.qualified.packagename.model.PieceType
 import my.qualified.packagename.model.PlayerType
 import kotlin.math.abs
 
@@ -146,8 +147,8 @@ class Pawn(playerType: PlayerType, private val direction: Direction) : Piece(pla
         return if (getMoveCount() == 0) FIRST_MOVE_DISTANCE else DEFAULT_MOVE_DISTANCE
     }
 
-    override fun getTypeId(): Int {
-        return 6
+    override fun getTypeId(): PieceType {
+        return PieceType.PAWN
     }
 
     private companion object {

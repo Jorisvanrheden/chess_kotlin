@@ -5,6 +5,7 @@ import my.qualified.packagename.model.Coordinate
 import my.qualified.packagename.model.Direction
 import my.qualified.packagename.model.Move
 import my.qualified.packagename.model.MoveSet
+import my.qualified.packagename.model.PieceType
 import my.qualified.packagename.model.PlayerType
 
 class King(playerType: PlayerType, private val connectedPieces: List<Piece>) : Piece(playerType) {
@@ -80,7 +81,7 @@ class King(playerType: PlayerType, private val connectedPieces: List<Piece>) : P
             // move the interacting piece one unit next to this piece on the other side
             moves.add(
                 Move(
-                    board.getPiece(coordinate),
+                    connectedPiece,
                     emptyList(),
                     connectedPiece.getCurrentCoordinate(),
                     Coordinate(
@@ -118,8 +119,8 @@ class King(playerType: PlayerType, private val connectedPieces: List<Piece>) : P
         return false
     }
 
-    override fun getTypeId(): Int {
-        return 1
+    override fun getTypeId(): PieceType {
+        return PieceType.KING
     }
 
     private companion object {

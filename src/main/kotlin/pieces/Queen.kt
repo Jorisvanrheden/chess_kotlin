@@ -5,6 +5,7 @@ import my.qualified.packagename.model.Coordinate
 import my.qualified.packagename.model.Direction
 import my.qualified.packagename.model.Move
 import my.qualified.packagename.model.MoveSet
+import my.qualified.packagename.model.PieceType
 import my.qualified.packagename.model.PlayerType
 import my.qualified.packagename.moves.getMovesInDirection
 
@@ -40,7 +41,7 @@ class Queen(playerType: PlayerType) : Piece(playerType) {
         }
     }
 
-    override fun getTypeId(): Int {
-        return 2
+    override fun getTypeId(): PieceType {
+        return PieceType.QUEEN
     }
 }

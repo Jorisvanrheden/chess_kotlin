@@ -4,6 +4,7 @@ import my.qualified.packagename.logic.Board
 import my.qualified.packagename.model.Coordinate
 import my.qualified.packagename.model.Move
 import my.qualified.packagename.model.MoveSet
+import my.qualified.packagename.model.PieceType
 import my.qualified.packagename.model.PlayerType
 
 class Knight(playerType: PlayerType) : Piece(playerType) {
@@ -38,7 +39,7 @@ class Knight(playerType: PlayerType) : Piece(playerType) {
         }
     }
 
-    override fun getTypeId(): Int {
-        return 4
+    override fun getTypeId(): PieceType {
+        return PieceType.KNIGHT
     }
 }
