@@ -13,8 +13,8 @@ class Pawn(playerType: PlayerType, private val direction: Direction) : Piece(pla
         var moves = mutableListOf<Coordinate>()
         moves.addAll(getDefaultMoves(coordinate, board))
         moves.addAll(getAttackingMoves(coordinate, board))
-        moves.addAll(getEnPassantMoves(coordinate, board))
-        return moves.map {
+
+        var moveSets = moves.map {
             MoveSet(
                 listOf(
                     Move(
@@ -25,7 +25,12 @@ class Pawn(playerType: PlayerType, private val direction: Direction) : Piece(pla
                     )
                 )
             )
-        }
+        }.toMutableList()
+
+        moveSets.addAll(
+            getEnPassantMoves(coordinate, board)
+        )
+        return moveSets
     }
 
     private fun getDefaultMoves(coordinate: Coordinate, board: Board): List<Coordinate> {
@@ -64,47 +69,67 @@ class Pawn(playerType: PlayerType, private val direction: Direction) : Piece(pla
         return moves
     }
 
-    private fun getEnPassantMoves(coordinate: Coordinate, board: Board): List<Coordinate> {
-        var moves = mutableListOf<Coordinate>()
-        val lastMoveSet = board.getLastMove()
-        if (lastMoveSet != null) {
-            // target should be an enemy pawn
-            val piece = board.getPiece(lastMoveSet.to) ?: return moves
-            if (piece.playerType == playerType) return moves
+    private fun getEnPassantMoves(coordinate: Coordinate, board: Board): List<MoveSet> {
+        var moveSets = mutableListOf<MoveSet>()
 
-            // piece should be a pawn
-            if (piece.getTypeId() != getTypeId()) return moves
+        val lastMoveSet = board.getLastMove() ?: return moveSets
 
-            // piece should have moved the large amount
-            val pieceMoveDistance = (lastMoveSet.to.x - lastMoveSet.from.x) +
-                (lastMoveSet.to.y - lastMoveSet.from.y)
-            if (pieceMoveDistance != FIRST_MOVE_DISTANCE) return moves
+        // target should be an enemy pawn
+        val piece = board.getPiece(lastMoveSet.to) ?: return moveSets
+        if (piece.playerType == playerType) return moveSets
 
-            if (direction.x == 1 || direction.x == -1) {
-                if (abs(lastMoveSet.to.y - coordinate.y) == 1) {
-                    val target = Coordinate(
+        // piece should be a pawn
+        if (piece.getTypeId() != getTypeId()) return moveSets
+
+        // piece should have moved the large amount
+        val pieceMoveDistance = (lastMoveSet.to.x - lastMoveSet.from.x) +
+            (lastMoveSet.to.y - lastMoveSet.from.y)
+        if (pieceMoveDistance != FIRST_MOVE_DISTANCE) return moveSets
+
+        val targets = getEnPassantTargets(coordinate, lastMoveSet)
+        for (target in targets) {
+            moveSets.add(
+                MoveSet(
+                    listOf(
+                        Move(
+                            this,
+                            getTargets(lastMoveSet.to, board),
+                            coordinate,
+                            target
+                        )
+                    )
+                )
+            )
+        }
+        return moveSets
+    }
+
+    private fun getEnPassantTargets(coordinate: Coordinate, lastMove: Move): List<Coordinate> {
+        var targets = mutableListOf<Coordinate>()
+        if (direction.x == 1 || direction.x == -1) {
+            if (abs(lastMove.to.y - coordinate.y) == 1) {
+                targets.add(
+                    Coordinate(
                         coordinate.x + direction.x,
-                        lastMoveSet.to.y
+                        lastMove.to.y
                     )
-                    if (board.isValidCoordinate(target)) {
-                        moves.add(target)
-                    }
-                }
-            }
-            if (direction.y == 1 || direction.y == -1) {
-                // if the piece is right next to the current piece
-                if (abs(lastMoveSet.to.x - coordinate.x) == 1) {
-                    val target = Coordinate(
-                        lastMoveSet.to.x,
-                        coordinate.y + direction.y
-                    )
-                    if (board.isValidCoordinate(target)) {
-                        moves.add(target)
-                    }
-                }
+                )
             }
         }
-        return moves
+
+        if (direction.y == 1 || direction.y == -1) {
+            // if the piece is right next to the current piece
+            if (abs(lastMove.to.x - coordinate.x) == 1) {
+                targets.add(
+                    Coordinate(
+                        lastMove.to.x,
+                        coordinate.y + direction.y
+                    )
+                )
+            }
+        }
+
+        return targets
     }
 
     private fun getAttackingCoordinates(origin: Coordinate): List<Coordinate> {
