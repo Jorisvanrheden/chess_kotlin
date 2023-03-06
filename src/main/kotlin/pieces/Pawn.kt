@@ -9,14 +9,14 @@ import my.qualified.packagename.model.PieceType
 import my.qualified.packagename.model.PlayerType
 import kotlin.math.abs
 
-class Pawn(playerType: PlayerType, private val direction: Direction) : Piece(playerType) {
+class Pawn(playerType: PlayerType, private val direction: Direction, private val startCoordinate: Coordinate) : Piece(playerType) {
     override fun getMoves(coordinate: Coordinate, board: Board): List<MoveSet> {
         var moves = mutableListOf<Coordinate>()
         moves.addAll(getDefaultMoves(coordinate, board))
         moves.addAll(getAttackingMoves(coordinate, board))
 
         var moveSets = moves.map {
-            it.toMove(board, it).toMoveSet()
+            it.toMove(board).toMoveSet()
         }.toMutableList()
 
         moveSets.addAll(
@@ -27,7 +27,7 @@ class Pawn(playerType: PlayerType, private val direction: Direction) : Piece(pla
 
     private fun getDefaultMoves(coordinate: Coordinate, board: Board): List<Coordinate> {
         var moves = mutableListOf<Coordinate>()
-        val maxMoveSize = getMaxMoveSize()
+        val maxMoveSize = getMaxMoveSize(coordinate)
         for (i in 1..maxMoveSize) {
             // Only if square is empty
             val updatedCoordinate = Coordinate(
@@ -134,8 +134,8 @@ class Pawn(playerType: PlayerType, private val direction: Direction) : Piece(pla
         return emptyList()
     }
 
-    private fun getMaxMoveSize(): Int {
-        return if (getMoveCount() == 0) FIRST_MOVE_DISTANCE else DEFAULT_MOVE_DISTANCE
+    private fun getMaxMoveSize(coordinate: Coordinate): Int {
+        return if (coordinate == startCoordinate) FIRST_MOVE_DISTANCE else DEFAULT_MOVE_DISTANCE
     }
 
     override fun getTypeId(): PieceType {

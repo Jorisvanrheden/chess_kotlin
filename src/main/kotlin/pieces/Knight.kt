@@ -20,7 +20,7 @@ class Knight(playerType: PlayerType) : Piece(playerType) {
         ).filter {
             board.isCoordinateWithinBounds(it)
         }.map {
-            it.toMove(board, it).toMoveSet()
+            it.toMove(board).toMoveSet()
         }
 
     override fun getTypeId(): PieceType {

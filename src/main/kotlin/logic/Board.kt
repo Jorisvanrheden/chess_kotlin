@@ -37,20 +37,19 @@ class Board() {
         return null
     }
 
-    fun getMoveSets(origin: Coordinate): List<MoveSet> {
-        val piece = getPiece(origin) ?: return emptyList()
-        val moves = piece.getMoves(origin, this)
-
-        // Validate all moves based on game logic
-        return moves.filter {
+    fun getMoveSets(coordinate: Coordinate): List<MoveSet> {
+        val piece = getPiece(coordinate) ?: return emptyList()
+        return piece.getMoves(coordinate, this).filter {
             isMoveAllowed(it, piece.playerType)
         }
     }
 
-    fun getMoves(coordinate: Coordinate): List<Coordinate> =
-        getMoveSets(coordinate).map {
-            Coordinate(it.moves[0].to.x, it.moves[0].to.y)
+    private fun getBasicMoveSets(coordinate: Coordinate): List<MoveSet> {
+        val piece = getPiece(coordinate) ?: return emptyList()
+        return piece.getMoves(coordinate, this).filter {
+            isEqualPlayerType(it.moves[0].from, it.moves[0].to)
         }
+    }
 
     fun undoLatestMoveSet(): Boolean {
         if (history.isEmpty()) return false
@@ -80,30 +79,14 @@ class Board() {
         // Set the target to null - it is important this happens before the targets are reset
         // In case no target, the square is still set properly, but otherwise targets are overwritten again
         setPieceAt(move.to, null)
-
-        // Set the targets back to the pieces that were located there
-        for (target in move.targets) {
-            setPieceAt(target.getCurrentCoordinate(), target)
-        }
-
-        // Undo the piece history update
-        move.activePiece?.removeLastCoordinate()
     }
 
     private fun applyMove(move: Move) {
         // set the origin to null
         setPieceAt(move.from, null)
 
-        // set all targets to null
-        for (target in move.targets) {
-            setPieceAt(target.getCurrentCoordinate(), null)
-        }
-
         // set the active piece end location
         setPieceAt(move.to, move.activePiece)
-
-        // Store the move for each piece
-        move.activePiece?.storeMove(move)
     }
 
     fun isCoordinateWithinBounds(coordinate: Coordinate): Boolean {
@@ -125,11 +108,16 @@ class Board() {
     fun isEqualPlayerType(originCoordinate: Coordinate, targetCoordinate: Coordinate): Boolean =
         getPiece(originCoordinate)?.playerType == getPiece(targetCoordinate)?.playerType
 
-    fun isKingInCheckAfterMove(moveSet: MoveSet, playerType: PlayerType) =
-        createCopy().let {
+    private fun isKingInCheckAfterMove(moveSet: MoveSet, playerType: PlayerType): Boolean {
+        // get king
+        this.let {
             it.applyMoveSet(moveSet)
-            getEnemyTargets(playerType).contains(getKing(playerType)?.getCurrentCoordinate())
+            getEnemyAttackingCoordinates(playerType).contains(
+                getKingCoordinate(playerType),
+            )
         }
+        return false
+    }
 
     private fun isMoveAllowed(moveSet: MoveSet, playerType: PlayerType): Boolean {
         if (isEqualPlayerType(moveSet.moves[0].from, moveSet.moves[0].to)) return false
@@ -137,44 +125,28 @@ class Board() {
         return true
     }
 
-    private fun createCopy() = this
+    private fun getEnemyAttackingCoordinates(playerType: PlayerType): List<Coordinate> =
+        getEnemyCoordinates(playerType).map {
+            getBasicMoveSets(it).map { moveSet -> moveSet.moves[0].to }
+        }.flatten()
 
-    private fun getEnemyTargets(type: PlayerType): List<Coordinate> {
-        var moves = mutableListOf<Coordinate>()
-
-        val enemyPieces = getEnemyPieces(type)
-        for (piece in enemyPieces) {
-            val moveSets = piece.getMoves(piece.getCurrentCoordinate(), this)
-            for (moveSet in moveSets) {
-                moves.addAll(moveSet.moves.map { it.to })
-            }
+    private fun getEnemyCoordinates(playerType: PlayerType): List<Coordinate> =
+        getBoardCoordinates().filter {
+            getPiece(it)?.playerType != playerType
         }
-        return moves
-    }
 
-    private fun getEnemyPieces(type: PlayerType): List<Piece> {
-        var pieces = mutableListOf<Piece>()
+    private fun getKingCoordinate(playerType: PlayerType): Coordinate =
+        getBoardCoordinates().first {
+            getPiece(it)?.playerType == playerType && getPiece(it)?.getTypeId() == PieceType.KING
+        }
+
+    private fun getBoardCoordinates(): List<Coordinate> {
+        val coordinates = mutableListOf<Coordinate>()
         for (i in 0 until matrix.size) {
             for (j in 0 until matrix[0].size) {
-                val piece = getPiece(Coordinate(i, j)) ?: continue
-
-                if (piece.playerType == type)continue
-                pieces.add(piece)
+                coordinates.add(Coordinate(i, j))
             }
         }
-        return pieces
-    }
-
-    private fun getKing(type: PlayerType): Piece? {
-        for (i in 0 until matrix.size) {
-            for (j in 0 until matrix[0].size) {
-                val piece = getPiece(Coordinate(i, j)) ?: continue
-
-                if (piece.playerType == type && piece.getTypeId() == PieceType.KING) {
-                    return piece
-                }
-            }
-        }
-        return null
+        return coordinates
     }
 }

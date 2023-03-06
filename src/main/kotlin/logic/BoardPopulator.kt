@@ -33,7 +33,7 @@ class BoardPopulator() {
         setPieceAtCoordinate(Knight(PlayerType.BLACK), Coordinate(6, 0))
         setPieceAtCoordinate(blackRookShort, Coordinate(7, 0))
         for (i in 0 until SIZE_X) {
-            setPieceAtCoordinate(Pawn(PlayerType.BLACK, Direction(0, 1)), Coordinate(i, 1))
+            setPieceAtCoordinate(Pawn(PlayerType.BLACK, Direction(0, 1), Coordinate(i, 1)), Coordinate(i, 1))
         }
 
         val whiteRookLong = Rook(PlayerType.WHITE)
@@ -47,7 +47,7 @@ class BoardPopulator() {
         setPieceAtCoordinate(Knight(PlayerType.WHITE), Coordinate(6, 7))
         setPieceAtCoordinate(whiteRookShort, Coordinate(7, 7))
         for (i in 0 until SIZE_X) {
-            setPieceAtCoordinate(Pawn(PlayerType.WHITE, Direction(0, -1)), Coordinate(i, 6))
+            setPieceAtCoordinate(Pawn(PlayerType.WHITE, Direction(0, -1), Coordinate(i, 1)), Coordinate(i, 6))
         }
 
         return matrix
@@ -55,7 +55,6 @@ class BoardPopulator() {
 
     private fun setPieceAtCoordinate(piece: Piece, coordinate: Coordinate) {
         matrix[coordinate.x][coordinate.y] = piece
-        piece.setCurrentCoordinate(coordinate)
     }
 
     private companion object {

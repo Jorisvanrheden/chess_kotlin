@@ -25,7 +25,7 @@ class King(playerType: PlayerType, private val connectedPieces: List<Piece>) : P
         }.filter {
             board.isCoordinateWithinBounds(it)
         }.map {
-            it.toMove(board, it).toMoveSet()
+            it.toMove(board).toMoveSet()
         }
 
     private fun getCastlingMoves(coordinate: Coordinate, board: Board): List<MoveSet> {
