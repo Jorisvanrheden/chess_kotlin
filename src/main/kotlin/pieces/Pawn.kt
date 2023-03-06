@@ -9,7 +9,7 @@ import my.qualified.packagename.model.PieceType
 import my.qualified.packagename.model.PlayerType
 import kotlin.math.abs
 
-class Pawn(playerType: PlayerType, private val direction: Direction, private val startCoordinate: Coordinate) : Piece(playerType) {
+class Pawn(playerType: PlayerType, private val direction: Direction) : Piece(playerType) {
     override fun getMoves(coordinate: Coordinate, board: Board): List<MoveSet> {
         var moves = mutableListOf<Coordinate>()
         moves.addAll(getDefaultMoves(coordinate, board))
@@ -135,7 +135,7 @@ class Pawn(playerType: PlayerType, private val direction: Direction, private val
     }
 
     private fun getMaxMoveSize(coordinate: Coordinate): Int {
-        return if (coordinate == startCoordinate) FIRST_MOVE_DISTANCE else DEFAULT_MOVE_DISTANCE
+        return if (hasMoved) FIRST_MOVE_DISTANCE else DEFAULT_MOVE_DISTANCE
     }
 
     override fun getTypeId(): PieceType {

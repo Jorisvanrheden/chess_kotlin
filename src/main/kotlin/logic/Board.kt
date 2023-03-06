@@ -10,9 +10,6 @@ import my.qualified.packagename.pieces.Piece
 class Board() {
     private val boardPopulator = BoardPopulator()
     private var matrix: Array<Array<Piece?>> = boardPopulator.generateMatrix()
-
-    private var history = mutableListOf<MoveSet>()
-
     private var sizeX: Int = boardPopulator.getSizeX()
     private var sizeY: Int = boardPopulator.getSizeY()
 
@@ -30,13 +27,6 @@ class Board() {
         return board
     }
 
-    fun getLastMove(): Move? {
-        if (history.size > 0) {
-            return history[history.size - 1].moves[0]
-        }
-        return null
-    }
-
     fun getMoveSets(coordinate: Coordinate): List<MoveSet> {
         val piece = getPiece(coordinate) ?: return emptyList()
         return piece.getMoves(coordinate, this).filter {
@@ -51,34 +41,10 @@ class Board() {
         }
     }
 
-    fun undoLatestMoveSet(): Boolean {
-        if (history.isEmpty()) return false
-
-        val moveSet = history[history.size - 1]
-
-        for (move in moveSet.moves) {
-            undoMove(move)
-        }
-
-        history.removeLast()
-
-        return true
-    }
-
     fun applyMoveSet(moveSet: MoveSet) {
         for (move in moveSet.moves) {
             applyMove(move)
         }
-        history.add(moveSet)
-    }
-
-    private fun undoMove(move: Move) {
-        // To undo, the active piece must be set back to the from position
-        setPieceAt(move.from, move.activePiece)
-
-        // Set the target to null - it is important this happens before the targets are reset
-        // In case no target, the square is still set properly, but otherwise targets are overwritten again
-        setPieceAt(move.to, null)
     }
 
     private fun applyMove(move: Move) {
@@ -101,6 +67,9 @@ class Board() {
 
     fun getPiece(coordinate: Coordinate): Piece? =
         matrix[coordinate.x][coordinate.y]
+
+    fun getPieceCoordinate(piece: Piece) =
+        getBoardCoordinates().first { getPiece(it) == piece }
 
     fun containsPiece(coordinate: Coordinate): Boolean =
         matrix[coordinate.x][coordinate.y] != null

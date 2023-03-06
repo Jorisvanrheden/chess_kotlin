@@ -31,15 +31,15 @@ class King(playerType: PlayerType, private val connectedPieces: List<Piece>) : P
     private fun getCastlingMoves(coordinate: Coordinate, board: Board): List<MoveSet> {
         var moveSets = mutableListOf<MoveSet>()
         // check if the king has moved
-        if (getMoveCount() > 0) return emptyList()
+        if (hasMoved) return emptyList()
 
         // for each of the connected piece, only process the move if that piece hasnt moved yet
         for (connectedPiece in connectedPieces) {
-            if (connectedPiece.getMoveCount() > 0) continue
-            if (containsPieceBetweenCoordinates(coordinate, connectedPiece.getCurrentCoordinate(), board)) continue
+            if (connectedPiece.hasMoved) continue
+            if (containsPieceBetweenCoordinates(coordinate, board.getPieceCoordinate(connectedPiece), board)) continue
 
             // get direction between pieces
-            val direction = getDirectionBetweenCoordinates(coordinate, connectedPiece.getCurrentCoordinate())
+            val direction = getDirectionBetweenCoordinates(coordinate, board.getPieceCoordinate(connectedPiece))
 
             // move this piece x units in the direction
             val moves = mutableListOf<Move>()
@@ -59,7 +59,7 @@ class King(playerType: PlayerType, private val connectedPieces: List<Piece>) : P
                 Move(
                     connectedPiece,
                     emptyList(),
-                    connectedPiece.getCurrentCoordinate(),
+                    board.getPieceCoordinate(connectedPiece),
                     Coordinate(
                         coordinate.x + direction.x * CASTLING_MOVE_DISTANCE - direction.x * 1,
                         coordinate.y,

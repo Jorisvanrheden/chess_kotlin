@@ -13,6 +13,8 @@ abstract class Piece(val playerType: PlayerType) {
         return listOf(targetPiece)
     }
 
+    var hasMoved = false
+
     abstract fun getMoves(coordinate: Coordinate, board: Board): List<MoveSet>
 
     abstract fun getTypeId(): PieceType
