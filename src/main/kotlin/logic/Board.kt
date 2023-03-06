@@ -42,7 +42,9 @@ class Board() {
         val moves = piece.getMoves(origin, this)
 
         // Validate all moves based on game logic
-        return moves.filter { !leavesKingInCheck(it, piece.playerType) }
+        return moves.filter {
+            isMoveAllowed(it, piece.playerType)
+        }
     }
 
     fun getMoves(coordinate: Coordinate): List<Coordinate> =
@@ -120,38 +122,22 @@ class Board() {
     fun containsPiece(coordinate: Coordinate): Boolean =
         matrix[coordinate.x][coordinate.y] != null
 
-    fun isEqualPlayerType(originCoordinate: Coordinate, targetCoordinate: Coordinate): Boolean {
-        val originPiece = matrix[originCoordinate.x][originCoordinate.y]
-        val targetPiece = matrix[targetCoordinate.x][targetCoordinate.y]
+    fun isEqualPlayerType(originCoordinate: Coordinate, targetCoordinate: Coordinate): Boolean =
+        getPiece(originCoordinate)?.playerType == getPiece(targetCoordinate)?.playerType
 
-        if (originPiece != null && targetPiece != null) {
-            return originPiece.playerType == targetPiece.playerType
-        }
-        return false
-    }
-
-    fun isValidMove(originCoordinate: Coordinate, targetCoordinate: Coordinate): Boolean {
-        // check move validity
-        if (!isCoordinateWithinBounds(targetCoordinate)) {
-            return false
+    fun isKingInCheckAfterMove(moveSet: MoveSet, playerType: PlayerType) =
+        createCopy().let {
+            it.applyMoveSet(moveSet)
+            getEnemyTargets(playerType).contains(getKing(playerType)?.getCurrentCoordinate())
         }
 
-        // process move
-        return if (containsPiece(targetCoordinate)) {
-            // only if the piece is not of the same type, the move is valid
-            !isEqualPlayerType(originCoordinate, targetCoordinate)
-        } else {
-            true
-        }
+    private fun isMoveAllowed(moveSet: MoveSet, playerType: PlayerType): Boolean {
+        if (isEqualPlayerType(moveSet.moves[0].from, moveSet.moves[0].to)) return false
+        if (isKingInCheckAfterMove(moveSet, playerType)) return false
+        return true
     }
 
     private fun createCopy() = this
-    private fun leavesKingInCheck(moveSet: MoveSet, playerType: PlayerType): Boolean {
-        createCopy().let {
-            it.applyMoveSet(moveSet)
-            return getEnemyTargets(playerType).contains(getKing(playerType)?.getCurrentCoordinate())
-        }
-    }
 
     private fun getEnemyTargets(type: PlayerType): List<Coordinate> {
         var moves = mutableListOf<Coordinate>()

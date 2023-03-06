@@ -6,5 +6,5 @@ enum class PieceType(val id: Int) {
     KNIGHT(4),
     BISHOP(3),
     QUEEN(2),
-    KING(1)
+    KING(1),
 }

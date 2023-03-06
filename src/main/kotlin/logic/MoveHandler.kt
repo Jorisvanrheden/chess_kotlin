@@ -8,7 +8,7 @@ class MoveHandler(private var board: Board) {
 
     private var selectedPlayerIndex: Int = 0
 
-    fun processMove(origin: Coordinate, target: Coordinate) {
+    fun playMove(origin: Coordinate, target: Coordinate) {
         // Get the piece at the origin coordinate
         val piece = board.getPiece(origin)
 
