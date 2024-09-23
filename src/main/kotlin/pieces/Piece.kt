@@ -23,12 +23,13 @@ abstract class Piece(val playerType: PlayerType) {
         MoveSet(
             listOf(this),
         )
-    fun Coordinate.toMove(board: Board) =
+
+    fun toMove(from: Coordinate, to: Coordinate, board: Board) =
         Move(
-            board.getPiece(Coordinate(0, 0)),
-            getTargets(this, board),
-            Coordinate(0, 0),
             this,
+            getTargets(to, board),
+            from,
+            to,
         )
 
     override fun toString(): String {

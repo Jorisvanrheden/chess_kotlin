@@ -16,7 +16,7 @@ class Pawn(playerType: PlayerType, private val direction: Direction) : Piece(pla
         moves.addAll(getAttackingMoves(coordinate, board))
 
         var moveSets = moves.map {
-            it.toMove(board).toMoveSet()
+            toMove(coordinate, it, board).toMoveSet()
         }.toMutableList()
 
         moveSets.addAll(

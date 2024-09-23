@@ -10,6 +10,9 @@ import my.qualified.packagename.pieces.Piece
 class Board() {
     private val boardPopulator = BoardPopulator()
     private var matrix: Array<Array<Piece?>> = boardPopulator.generateMatrix()
+
+    private var history = mutableListOf<MoveSet>()
+
     private var sizeX: Int = boardPopulator.getSizeX()
     private var sizeY: Int = boardPopulator.getSizeY()
 
@@ -27,12 +30,24 @@ class Board() {
         return board
     }
 
+    fun getLastMove(): Move? {
+        if (history.size > 0) {
+            return history[history.size - 1].moves[0]
+        }
+        return null
+    }
+
     fun getMoveSets(coordinate: Coordinate): List<MoveSet> {
         val piece = getPiece(coordinate) ?: return emptyList()
         return piece.getMoves(coordinate, this).filter {
             isMoveAllowed(it, piece.playerType)
         }
     }
+
+    fun getMoves(coordinate: Coordinate) =
+        getMoveSets(coordinate).map {
+            it.moves[0].to
+        }
 
     private fun getBasicMoveSets(coordinate: Coordinate): List<MoveSet> {
         val piece = getPiece(coordinate) ?: return emptyList()
@@ -45,6 +60,7 @@ class Board() {
         for (move in moveSet.moves) {
             applyMove(move)
         }
+        history.add(moveSet)
     }
 
     private fun applyMove(move: Move) {

@@ -18,7 +18,7 @@ class Queen(playerType: PlayerType) : Piece(playerType) {
                 board.isCoordinateWithinBounds(it)
             }
             .map {
-                it.toMove(board).toMoveSet()
+                toMove(coordinate, it, board).toMoveSet()
             }
 
     override fun getTypeId(): PieceType {

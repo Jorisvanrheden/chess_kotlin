@@ -6,16 +6,10 @@ val board = Board()
 val moveHandler = MoveHandler(board)
 
 fun main() {
-    print(board.toString())
+    println(board.toString())
+    println(board.getMoves(Coordinate(4, 6)))
     moveHandler.playMove(Coordinate(4, 6), Coordinate(4, 5))
-    print(board.toString())
-    moveHandler.playMove(Coordinate(4, 6), Coordinate(4, 5))
-}
-
-fun processMove(xOrigin: Int, yOrigin: Int, xTarget: Int, yTarget: Int) {
-    moveHandler.playMove(Coordinate(xOrigin, yOrigin), Coordinate(xTarget, yTarget))
-}
-
-fun undoMove() {
-    moveHandler.undoMove()
+    println(board.toString())
+    println(board.getMoves(Coordinate(4, 5)))
+//    moveHandler.playMove(Coordinate(4, 6), Coordinate(4, 5))
 }
